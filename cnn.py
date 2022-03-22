@@ -28,6 +28,7 @@ from tensorflow.keras import backend as K
 import sklearn
 from sklearn.metrics import r2_score
 from tensorflow.keras.utils import plot_model
+import matplotlib.pyplot as plt
 
 def normalize(x):
     x = x+0.001
@@ -90,6 +91,17 @@ def create_train_test_data(path, leadtime,  r_max_lag, q_max_lag):
   #print(x_test.shape,y_test.shape)
   return x_train,y_train,x_test,y_test,dis_cache
 
+
+def plot_correlation(path):
+    df = pd.read_csv(path, delimiter="\t", header=None,
+                     names=["index", "rain", "dis", "non"])
+    x = plt.xcorr(df["rain"], df["dis"], normed=True, usevlines=True, maxlags=20)
+    results_return = {}
+    results_return["cross_lags"] = x[0].tolist()
+    results_return["cross_lags"] = [str(i) for i in results_return["cross_lags"]]
+    results_return["cross_values"] = x[1].tolist()
+    results_return["cross_values"] = [str(i) for i in results_return["cross_values"]]
+    return results_return
 
 
 def download_dataset(path, leadtime, r_max_lag, q_max_lag):
